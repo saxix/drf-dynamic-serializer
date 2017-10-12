@@ -1,0 +1,7 @@
+django
+devpi-builder
+flake8
+isort
+pdbpp
+pip-tools
+sphinx

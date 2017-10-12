@@ -1,0 +1,9 @@
+django-webtest
+factory_boy
+isort
+pytest
+pytest-cov
+pytest-django
+pytest-echo
+pytest-pythonpath
+tox

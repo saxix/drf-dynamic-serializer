@@ -1,0 +1,21 @@
+beautifulsoup4==4.6.0     # via webtest
+coverage==4.4.1           # via pytest-cov
+django-webtest==1.9.2
+factory-boy==2.9.2
+faker==0.8.4              # via factory-boy
+ipaddress==1.0.18         # via faker
+isort==4.2.15
+pluggy==0.5.2             # via tox
+py==1.4.34                # via pytest, tox
+pytest-cov==2.5.1
+pytest-django==3.1.2
+pytest-echo==1.4
+pytest-pythonpath==0.7.1
+pytest==3.2.3
+python-dateutil==2.6.1    # via faker
+six==1.11.0               # via faker, python-dateutil, tox, webtest
+tox==2.9.1
+virtualenv==15.1.0        # via tox
+waitress==1.1.0           # via webtest
+webob==1.7.3              # via webtest
+webtest==2.0.28           # via django-webtest

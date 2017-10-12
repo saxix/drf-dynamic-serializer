@@ -1,0 +1,51 @@
+language: python
+sudo: false
+python:
+  - 2.7
+  - 3.4
+  - 3.5
+  - 3.6
+
+
+cache:
+  directories:
+    - $HOME/.cache/pip
+
+services:
+  - MySQL
+  - PostgreSQL
+
+env:
+  - DJANGO=1.8
+  - DJANGO=1.9
+  - DJANGO=1.10
+  - DJANGO=1.11
+
+
+matrix:
+  exclude:
+    - python: 2.7
+      env: DJANGO=2.0
+
+    - python: 3.4
+      env: DJANGO=2.0
+
+    - python: 3.6
+      env: DJANGO=1.8
+    - python: 3.6
+      env: DJANGO=1.9
+    - python: 3.6
+      env: DJANGO=1.10
+
+install:
+  - pip install tox "coverage<=4.0" python-coveralls>=2.5 coveralls>=0.5 codecov
+
+script:
+  - tox -e "py${TRAVIS_PYTHON_VERSION//.}-d${DJANGO//.}-${DB}" -- py.test tests -v
+
+before_success:
+  - coverage erase
+
+after_success:
+  - coverage combine
+  - codecov
