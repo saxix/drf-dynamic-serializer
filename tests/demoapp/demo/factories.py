@@ -1,7 +1,23 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
-import logging
-from django.utils.translation import gettext as _
+from django.contrib.auth.models import User
+from factory import DjangoModelFactory
 
-logger = logging.getLogger(__name__)
+
+class UserFactory():
+    class Meta:
+        model = User
+
+    first_name = 'John'
+    last_name = 'Doe'
+    admin = False
+
+
+class AdminFactory(DjangoModelFactory):
+    class Meta:
+        model = User
+
+    first_name = 'Admin'
+    last_name = 'User'
+    admin = True
