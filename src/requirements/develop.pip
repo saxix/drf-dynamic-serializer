@@ -13,6 +13,7 @@ devpi-common==3.1.0       # via devpi-client
 devpi-plumber==0.4.2      # via devpi-builder
 django-webtest==1.9.2
 django==1.11.6
+djangorestframework==3.7.0
 docutils==0.14            # via sphinx
 enum34==1.1.6             # via flake8
 factory-boy==2.9.2

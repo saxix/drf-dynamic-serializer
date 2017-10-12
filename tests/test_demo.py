@@ -107,7 +107,7 @@ def test_no_serializers_fieldsets(admin_user, monkeypatch):
     view = DummyViewSet.as_view({'get': 'list'})
     response = view(request).render()  # Calling the view, not calling `.get()`
 
-    j = json.loads(response.content)
+    j = json.loads(response.content.decode('utf8'))
     assert set(j[0].keys()) == {'email', 'first_name',
                                               'groups', 'is_active',
                                               'is_staff', 'last_login',

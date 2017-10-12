@@ -1,6 +1,7 @@
 beautifulsoup4==4.6.0     # via webtest
 coverage==4.4.1           # via pytest-cov
 django-webtest==1.9.2
+djangorestframework==3.7.0
 factory-boy==2.9.2
 faker==0.8.4              # via factory-boy
 ipaddress==1.0.18         # via faker

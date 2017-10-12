@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
+from __future__ import absolute_import
 
 import logging
 from inspect import isclass
 
 from django.utils.functional import cached_property
 from rest_framework.serializers import ModelSerializer, BaseSerializer
+from six import b, u
 
 logger = logging.getLogger(__name__)
 
@@ -26,9 +27,9 @@ def serializer_factory(model, base=ModelSerializer, fields=None, exclude=None):
     parent = (object,)
     if hasattr(base, 'Meta'):
         parent = (base.Meta, object)
-    Meta = type(str('Meta'), parent, attrs)
+    Meta = type('Meta', parent, attrs)
     class_name = model.__name__ + 'Serializer'
-    return type(base)(class_name.encode('utf8'), (base,), {'Meta': Meta, })
+    return type(base)(class_name, (base,), {'Meta': Meta, })
 
 
 class InvalidSerializerError(Exception):
