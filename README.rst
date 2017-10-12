@@ -8,9 +8,6 @@ DRF Dynamic Serializer
 .. image:: https://travis-ci.org/saxix/drf-dynamic-serializer.png?branch=master
         :target: https://travis-ci.org/saxix/drf-dynamic-serializer
 
-.. image:: https://pypip.in/d/drf-dynamic-serializer/badge.png
-        :target: https://pypi.python.org/pypi/drf-dynamic-serializer
-
 
 Links
 ~~~~~
