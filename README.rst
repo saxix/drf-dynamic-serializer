@@ -3,6 +3,10 @@ DRF Dynamic Serializer
 ======================
 
 .. image:: https://badge.fury.io/py/drf-dynamic-serializer.png
+    :target: https://badge.fury.io/py/drf-dynamic-serializer
+
+
+.. image:: https://badge.fury.io/py/drf-dynamic-serializer.png
     :target: http://badge.fury.io/py/drf-dynamic-serializer
 
 .. image:: https://travis-ci.org/saxix/drf-dynamic-serializer.png?branch=master
