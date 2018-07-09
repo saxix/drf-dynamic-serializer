@@ -16,11 +16,11 @@ services:
   - PostgreSQL
 
 env:
-  - DJANGO=2.0
-  - DJANGO=2.1
+  - DJANGO=2.0 DRF=3.7
+  - DJANGO=2.0 DRF=3.8
 
-  - DRF=3.7
-  - DRF=3.8
+  - DJANGO=2.1 DRF=3.7
+  - DJANGO=2.1 DRF=3.8
 
 install:
   - pip install tox "coverage<=4.0" python-coveralls>=2.5 coveralls>=0.5 codecov
