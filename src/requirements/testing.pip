@@ -5,8 +5,6 @@ certifi
 check-manifest
 coverage
 django-webtest
-django
-djangorestframework
 factory-boy
 faker
 fancycompleter
