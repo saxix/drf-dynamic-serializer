@@ -16,35 +16,17 @@ services:
   - PostgreSQL
 
 env:
-  - DJANGO=1.9
-  - DJANGO=1.10
-  - DJANGO=1.11
   - DJANGO=2.0
   - DJANGO=2.1
 
-
-matrix:
-  exclude:
-    - python: 2.7
-      env: DJANGO=2.0
-
-    - python: 2.7
-      env: DJANGO=2.1
-
-    - python: 3.4
-      env: DJANGO=2.0
-
-    - python: 3.6
-      env: DJANGO=1.9
-
-    - python: 3.6
-      env: DJANGO=1.10
+  - DRF=3.7
+  - DRF=3.8
 
 install:
   - pip install tox "coverage<=4.0" python-coveralls>=2.5 coveralls>=0.5 codecov
 
 script:
-  - tox -e "py${TRAVIS_PYTHON_VERSION//.}-d${DJANGO//.}"
+  - tox -e "py${TRAVIS_PYTHON_VERSION//.}-d${DJANGO//.}-drf${DRF//.}"
 
 before_success:
   - coverage erase
