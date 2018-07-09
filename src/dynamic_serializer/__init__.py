@@ -1,3 +1,3 @@
 NAME = 'drf-dynamic-serializer'
-VERSION = __version__ = '1.1.0'
+VERSION = __version__ = '1.2.0'
 __author__ = 'Stefano Apostolico'
