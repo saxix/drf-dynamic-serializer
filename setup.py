@@ -1,26 +1,38 @@
 #!/usr/bin/env python
+import ast
 import os
-import imp
+import sys
 import codecs
+import re
+
 from setuptools import setup, find_packages
 
-ROOT = os.path.realpath(os.path.join(os.path.dirname(__file__)))
+ROOT = os.path.realpath(os.path.dirname(__file__))
 init = os.path.join(ROOT, 'src', 'dynamic_serializer', '__init__.py')
-app = imp.load_source('dynamic_serializer', init)
+_version_re = re.compile(r'__version__\s+=\s+(.*)')
+_name_re = re.compile(r'NAME\s+=\s+(.*)')
+
+sys.path.insert(0, os.path.join(ROOT, 'src'))
+
+with open(init, 'rb') as f:
+    content = f.read().decode('utf-8')
+    VERSION = str(ast.literal_eval(_version_re.search(content).group(1)))
+    NAME = str(ast.literal_eval(_name_re.search(content).group(1)))
 
 
-def read(*parts):
-    here = os.path.abspath(os.path.dirname(__file__))
-    return codecs.open(os.path.join(here, *parts)).read()
+def read(*files):
+    content = []
+    for f in files:
+        content.extend(codecs.open(os.path.join(ROOT, 'src', 'requirements', f), 'r').readlines())
+    return "\n".join(filter(lambda l: not l.startswith('-'), content))
 
 
-tests_requires = read('src/requirements/testing.pip')
-install_requires = read('src/requirements/install.pip')
-dev_requires = read('src/requirements/develop.pip')
+install_requires = read('install.pip')
+tests_requires = read('testing.pip')
 
 setup(
-    name=app.NAME,
-    version=app.VERSION,
+    name=NAME,
+    version=VERSION,
     url='https://github.com/saxix/drf-dynamic-serializer',
     author='Stefano Apostolico',
     author_email='s.apostolico@gmail.com',
@@ -32,7 +44,6 @@ setup(
     install_requires=install_requires,
     tests_require=tests_requires,
     extras_require={
-        'dev': dev_requires,
         'tests': tests_requires,
     },
     platforms=['linux'],

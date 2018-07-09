@@ -8,33 +8,10 @@ develop:
 	@pip install -U pip setuptools pip-tools
 	@pip install -e .[dev]
 
-compile-requirements:
-	@pip-compile src/requirements/install.in \
-		--upgrade \
-		--rebuild \
-		--no-header \
-		--no-emit-trusted-host \
-		--no-index -o src/requirements/install.pip
-	@pip-compile src/requirements/testing.in \
-		src/requirements/install.pip \
-		--upgrade \
-		--rebuild \
-		--no-header \
-		--no-emit-trusted-host \
-		--no-index -o src/requirements/testing.pip
-	@pip-compile src/requirements/develop.in \
-		src/requirements/install.pip \
-		src/requirements/testing.pip \
-		--upgrade \
-		--rebuild \
-		--no-header \
-		--no-emit-trusted-host \
-		--no-index -o src/requirements/develop.pip
 
-sync-requirements:
-	pip-sync src/requirements/develop.pip
-	pip install -e .[dev]
-
+requirements:
+	pipenv lock --requirements -d > src/requirements/testing.pip
+	pipenv lock --requirements > src/requirements/install.pip
 
 test:
 	py.test -v --create-db

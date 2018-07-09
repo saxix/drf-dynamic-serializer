@@ -9,6 +9,65 @@ DRF Dynamic Serializer
         :target: https://travis-ci.org/saxix/drf-dynamic-serializer
 
 
+Simple plugin for DRF to customise output
+
+Example
+~~~~~~~
+
+Consider this starting code
+
+
+    class UserSerializer(serializers.HyperlinkedModelSerializer):
+        class Meta:
+            model = User
+            exclude = ('date_joined', 'password')
+
+
+    class BaseViewSet(viewsets.ModelViewSet):
+        queryset = User.objects.all()
+        serializer_class = UserSerializer
+
+Now add some salt
+
+
+    class UserSerializerShort(serializers.HyperlinkedModelSerializer):
+        class Meta:
+            model = User
+            fields = ('email', 'first_name', 'last_name')
+
+
+    class DynamicSerializerViewSet(DynamicSerializerMixin, BaseViewSet):
+        serializers_fieldsets = {'light': ('last_name', 'first_name'),
+                                 'short': UserSerializerShort}
+
+this allows queries like:
+
+    - /users/?
+    - /users/?serializer=std
+    - /users/?serializer=light
+    - /users/?serializer=short
+
+
+... and now a bit of pepper
+
+
+    class DynamicFieldsSerializerViewSet(DynamicFieldsSerializerMixin, BaseViewSet):
+        pass
+
+this allows queries like:
+
+    - /users/?
+    - /users/?_fields=email,first_name,is_active
+
+
+... finally full seasoning
+
+
+    class DynamicOutputViewSet(DynamicFieldsSerializerMixin, BaseViewSet):
+        pass
+
+
+
 Links
 ~~~~~
 

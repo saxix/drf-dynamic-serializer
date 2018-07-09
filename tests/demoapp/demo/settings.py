@@ -14,8 +14,6 @@ INSTALLED_APPS = ['django.contrib.auth',
                   'django.contrib.messages',
                   'django.contrib.staticfiles',
                   'django.contrib.admin',
-                  'dynamic_serializer',
-                  # 'dynamic_serializer.apps.DynamicSerializerConfig',
                   'demo'
                   ]
 
