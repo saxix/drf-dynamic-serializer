@@ -1,0 +1,33 @@
+language: python
+sudo: false
+python:
+  - 3.6
+
+
+cache:
+  directories:
+    - $HOME/.cache/pip
+
+services:
+  - MySQL
+  - PostgreSQL
+
+env:
+  - DJANGO=2.0 DRF=3.7
+  - DJANGO=2.0 DRF=3.8
+
+  - DJANGO=2.1 DRF=3.7
+  - DJANGO=2.1 DRF=3.8
+
+install:
+  - pip install tox "coverage<=4.0" python-coveralls>=2.5 coveralls>=0.5 codecov
+
+script:
+  - tox -e "py${TRAVIS_PYTHON_VERSION//.}-d${DJANGO//.}-drf${DRF//.}"
+
+before_success:
+  - coverage erase
+
+after_success:
+  - coverage combine
+  - codecov

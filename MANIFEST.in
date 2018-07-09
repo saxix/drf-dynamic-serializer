@@ -1,0 +1,23 @@
+include README
+include CHANGES
+include LICENSE
+include MANIFEST.in
+include *.py
+include tox.ini
+exclude Pipfile
+exclude Pipfile.lock
+
+
+recursive-include tests *.coveragerc
+recursive-include tests *.py
+recursive-include docs *
+recursive-include src/requirements *.pip
+recursive-include src/dynamic_serializer *
+
+exclude Makefile
+exclude .github
+
+recursive-exclude .github *
+recursive-exclude src *.in
+
+prune tests
