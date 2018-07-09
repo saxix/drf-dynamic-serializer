@@ -13,13 +13,14 @@ logger = logging.getLogger(__name__)
 def serializer_factory(model, base=ModelSerializer, fields=None, exclude=None):
     attrs = {'model': model}
     if fields is not None:
-        attrs['fields'] = fields
+        attrs['fields'] = fields or None
     if exclude is not None:
-        attrs['exclude'] = exclude
+        attrs['exclude'] = exclude or None
 
     parent = (object,)
     if hasattr(base, 'Meta'):
-        parent = (base.Meta, object)
+        parent = (base.Meta, )
+
     Meta = type('Meta', parent, attrs)
     class_name = model.__name__ + 'Serializer'
     return type(base)(class_name, (base,), {'Meta': Meta, })
