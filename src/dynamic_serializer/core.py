@@ -9,17 +9,20 @@ from rest_framework.serializers import BaseSerializer, ModelSerializer
 
 logger = logging.getLogger(__name__)
 
+NOTSET = object()
 
-def serializer_factory(model, base=ModelSerializer, fields=None, exclude=None):
+
+def serializer_factory(model, base=ModelSerializer, fields=NOTSET, exclude=NOTSET):
     attrs = {'model': model}
-    if fields is not None:
+    if fields != NOTSET:
         attrs['fields'] = fields
-    if exclude is not None:
+    if exclude != NOTSET:
         attrs['exclude'] = exclude
 
     parent = (object,)
     if hasattr(base, 'Meta'):
-        parent = (base.Meta, object)
+        parent = (base.Meta,)
+
     Meta = type('Meta', parent, attrs)
     class_name = model.__name__ + 'Serializer'
     return type(base)(class_name, (base,), {'Meta': Meta, })
@@ -98,9 +101,9 @@ class FieldsStrategy(ParserStrategy):
         model_class = get_attr(self.viewset, 'queryset.model',
                                get_attr(self.viewset.serializer_class, 'Meta.model', None))
         requested_fields = list(filter(lambda s: bool(s), map(lambda s: s.strip(),
-                                                         self.viewset.request.query_params.get(self.param_name,
-                                                                                               "").split(
-                                                             ","))))
+                                                              self.viewset.request.query_params.get(self.param_name,
+                                                                                                    "").split(
+                                                                  ","))))
         if not requested_fields:
             return self.viewset.serializer_class
 
