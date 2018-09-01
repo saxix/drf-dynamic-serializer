@@ -4,10 +4,7 @@ import logging
 from django.contrib.auth.models import User
 from rest_framework import serializers, viewsets
 
-from dynamic_serializer.core import (DynamicSerializerMixin,
-                                     DynamicFieldsSerializerMixin,
-                                     DynamicOutput
-                                     )
+from dynamic_serializer.core import DynamicSerializerMixin, DynamicSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -34,16 +31,21 @@ class DynamicSerializerViewSet(DynamicSerializerMixin, BaseViewSet):
                              'short': UserSerializerShort,
                              'broken': User,
                              'none': None,
+                             'dynamic': DynamicSerializer(['first_name',
+                                                           'last_name',
+                                                           'is_active',
+                                                           'email'
+                                                           ])
                              }
 
-
-class DynamicFieldsSerializerViewSet(DynamicFieldsSerializerMixin, BaseViewSet):
-    pass
-
-
-class DynamicOutputViewSet(DynamicOutput, BaseViewSet):
-    serializers_fieldsets = {'light': ('last_name', 'first_name'),
-                             'short': UserSerializerShort,
-                             'broken': User,
-                             'none': None,
-                             }
+#
+# class DynamicFieldsSerializerViewSet(DynamicFieldsSerializerMixin, BaseViewSet):
+#     pass
+#
+#
+# class DynamicOutputViewSet(DynamicOutput, BaseViewSet):
+#     serializers_fieldsets = {'light': ('last_name', 'first_name'),
+#                              'short': UserSerializerShort,
+#                              'broken': User,
+#                              'none': None,
+#                              }

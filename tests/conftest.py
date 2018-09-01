@@ -13,7 +13,6 @@ def pytest_configure(config):
     logger.handlers = [handler]
 
 
-
 @pytest.fixture
 def demomodel():
     from demo.factories import DemoModelFactory

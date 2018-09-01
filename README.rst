@@ -47,28 +47,23 @@ Now add some salt
 this allows queries like:
 
     - /users/?
-    - /users/?serializer=std
-    - /users/?serializer=light
-    - /users/?serializer=short
+    - /users/?+serializer=std
+    - /users/?+serializer=light
+    - /users/?+serializer=short
 
 
 ... and now a bit of pepper
 
 
-    class DynamicFieldsSerializerViewSet(DynamicFieldsSerializerMixin, BaseViewSet):
-        pass
+    class DynamicSerializerViewSet(DynamicSerializerMixin, BaseViewSet):
+        serializers_fieldsets = {'light': ('last_name', 'first_name'),
+                                 'short': UserSerializerShort,
+                                 'dynamic': DynamicSerializer('last_name', 'first_name', 'is_active')}
 
 this allows queries like:
 
     - /users/?
-    - /users/?_fields=email,first_name,is_active
-
-
-... finally full seasoning
-
-
-    class DynamicOutputViewSet(DynamicFieldsSerializerMixin, BaseViewSet):
-        pass
+    - /users/?+serializer=dynamic&+fields=email,last_name
 
 
 
