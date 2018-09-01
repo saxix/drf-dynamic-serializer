@@ -18,7 +18,7 @@ Simple plugin for DRF to customise output
 Example
 ~~~~~~~
 
-Consider this starting code
+Consider this starting code::
 
 
     class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -31,7 +31,8 @@ Consider this starting code
         queryset = User.objects.all()
         serializer_class = UserSerializer
 
-Now add some salt
+
+Now add some salt::
 
 
     class UserSerializerShort(serializers.HyperlinkedModelSerializer):
@@ -44,7 +45,7 @@ Now add some salt
         serializers_fieldsets = {'light': ('last_name', 'first_name'),
                                  'short': UserSerializerShort}
 
-this allows queries like:
+this allows queries like::
 
     - /users/?
     - /users/?+serializer=std
@@ -52,7 +53,7 @@ this allows queries like:
     - /users/?+serializer=short
 
 
-... and now a bit of pepper
+... and now a bit of pepper::
 
 
     class DynamicSerializerViewSet(DynamicSerializerMixin, BaseViewSet):
@@ -60,7 +61,7 @@ this allows queries like:
                                  'short': UserSerializerShort,
                                  'dynamic': DynamicSerializer('last_name', 'first_name', 'is_active')}
 
-this allows queries like:
+this allows queries like::
 
     - /users/?
     - /users/?+serializer=dynamic&+fields=email,last_name
