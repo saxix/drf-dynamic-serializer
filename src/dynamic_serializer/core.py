@@ -59,8 +59,11 @@ def get_attr(obj, attr, default=None):
 
 
 class DynamicSerializer(object):
-    def __init__(self, allowed_fields=None):
-        self.allowed_fields = set(allowed_fields) or {}
+    def __init__(self, allowed_fields):
+        if isinstance(allowed_fields, (list, tuple, set)):
+            self.allowed_fields = set(allowed_fields)
+        else:
+            self.allowed_fields = {f for f in allowed_fields().get_fields()}
 
     def get_fields(self, view):
         requested_fields = set(view.request.query_params.get(view.dynamic_fields_param, '').split(','))

@@ -78,6 +78,9 @@ def test_serializer_dynamic(admin_user):
     response = client.get('/users-dynamic/?%2Bserializer=dynamic&%2Bfields=is_active', format='json')
     assert set(response.json()[0].keys()) == {'is_active'}
 
+    response = client.get('/users-dynamic/?%2Bserializer=dynamic2&%2Bfields=is_active', format='json')
+    assert set(response.json()[0].keys()) == {'is_active'}
+
     with pytest.raises(InvalidFieldError) as e:
         client.get('/users-dynamic/?%2Bserializer=dynamic&%2Bfields=invalid', format='json')
         assert str(e) == "invalid"
