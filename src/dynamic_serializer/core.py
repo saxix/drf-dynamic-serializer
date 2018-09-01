@@ -3,8 +3,8 @@ from __future__ import absolute_import
 
 import logging
 from inspect import isclass
+from urllib.parse import unquote, quote
 
-from django.utils.functional import cached_property
 from rest_framework.serializers import BaseSerializer, ModelSerializer
 
 logger = logging.getLogger(__name__)
@@ -32,6 +32,10 @@ class InvalidSerializerError(Exception):
     pass
 
 
+class InvalidFieldError(Exception):
+    pass
+
+
 def get_attr(obj, attr, default=None):
     """Recursive get object's attribute. May use dot notation.
 
@@ -54,75 +58,35 @@ def get_attr(obj, attr, default=None):
         return get_attr(getattr(obj, L[0], default), '.'.join(L[1:]), default)
 
 
-class ParserStrategy(object):
-    param_name = 'serializer'
+class DynamicSerializer(object):
+    def __init__(self, allowed_fields):
+        if isinstance(allowed_fields, (list, tuple, set)):
+            self.allowed_fields = set(allowed_fields)
+        else:
+            self.allowed_fields = {f for f in allowed_fields().get_fields()}
 
-    def __init__(self, viewset):
-        self.viewset = viewset
+    def get_fields(self, view):
+        requested_fields = set(view.request.query_params.get(view.dynamic_fields_param, '').split(','))
+        if requested_fields - self.allowed_fields:
+            raise InvalidFieldError(",".join(requested_fields - self.allowed_fields))
 
-
-class SerializerStrategy(ParserStrategy):
-    param_name = 'serializer'
-
-    # serializers_fieldsets = {'std': None}
-
-    @cached_property
-    def _default_serializer(self):
-        return self.viewset.serializers_fieldsets.get('std',
-                                                      self.viewset.serializer_class) or self.viewset.serializer_class
-
-    def _get_serializer_from_param(self):
-        model_class = get_attr(self.viewset, 'queryset.model',
-                               get_attr(self.viewset.serializer_class, 'Meta.model', None))
-        exclude_fields = get_attr(self._default_serializer, 'Meta.exclude', [])
-
-        name = self.viewset.request.query_params.get(self.param_name, 'std')
-        field_list_or_serializer = self.viewset.serializers_fieldsets.get(name, None)
-        if isinstance(field_list_or_serializer, (list, tuple)):  # fields list
-            field_list = field_list_or_serializer
-        elif isclass(field_list_or_serializer):  # Serializer class
-            return field_list_or_serializer
-        else:  # Standard Serializer
-            return self._default_serializer
-
-        filter(lambda s: s not in exclude_fields, field_list)
-
-        return serializer_factory(model_class,
-                                  self.viewset.serializer_class,
-                                  exclude=(),
-                                  fields=field_list,
-                                  )
+        return requested_fields
 
 
-class FieldsStrategy(ParserStrategy):
-    param_name = '_fields'
-
-    def _get_serializer_from_param(self):
-        model_class = get_attr(self.viewset, 'queryset.model',
-                               get_attr(self.viewset.serializer_class, 'Meta.model', None))
-        requested_fields = list(filter(lambda s: bool(s), map(lambda s: s.strip(),
-                                                              self.viewset.request.query_params.get(self.param_name,
-                                                                                                    "").split(
-                                                                  ","))))
-        if not requested_fields:
-            return self.viewset.serializer_class
-
-        field_list = filter(lambda s: s in self.viewset.base_fields, requested_fields)
-        return serializer_factory(model_class,
-                                  self.viewset.serializer_class,
-                                  exclude=(),
-                                  fields=list(field_list, )
-                                  )
-
-
-class DynamicMixin(object):
-    _serializers_classes = {}
-    strategy_class = None
+class DynamicSerializerMixin(object):
+    serializer_field_param = '+serializer'
+    dynamic_fields_param = '+fields'
     serializers_fieldsets = {'std': None}
+    _serializers_classes = {}
 
-    def __init__(self, *args, **kwargs):
-        super(DynamicMixin, self).__init__()
-        self.strategy = self.strategy_class(self)
+    def get_serializer_fields(self, name):
+        target = self.serializers_fieldsets.get(name, None)
+        if isinstance(target, (list, tuple)):
+            fields = target
+        else:
+            ser = self._get_serializer_from_param(name)
+            return sorted([f for f in ser().get_fields()])
+        return sorted(fields)
 
     @property
     def _default_serializer(self):
@@ -152,33 +116,36 @@ class DynamicMixin(object):
         return serializer_class(*args, **kwargs)
 
     def get_serializer_class(self):
-        return self.strategy._get_serializer_from_param()
+        return self._get_serializer_from_param()
 
+    def _build_serializer_from_fields(self, fields):
+        model_class = get_attr(self, 'queryset.model',
+                               get_attr(self.serializer_class, 'Meta.model', None))
+        exclude_fields = get_attr(self._default_serializer, 'Meta.exclude', [])
 
-class DynamicSerializerMixin(DynamicMixin):
-    param_name = 'serializer'
-    serializers_fieldsets = {'std': None}
-    strategy_class = SerializerStrategy
+        # field_list = target
+        field_list = list(filter(lambda s: s not in exclude_fields, fields))
 
+        return serializer_factory(model_class,
+                                  self.serializer_class,
+                                  exclude=(),
+                                  fields=field_list,
+                                  )
 
-class DynamicFieldsSerializerMixin(DynamicMixin):
-    param_name = '_fields'
-    strategy_class = FieldsStrategy
+    def _get_serializer_from_param(self, name=None):
+        if name is None:
+            name = self.request.query_params.get(self.serializer_field_param, 'std')
 
-    @property
-    def base_fields(self):
-        return get_attr(self._default_serializer(), 'fields', []).keys()
+        if name == 'std':
+            return self._default_serializer
 
-
-class DynamicOutput(DynamicFieldsSerializerMixin):
-    strategy_classes = [FieldsStrategy, SerializerStrategy]
-
-    def __init__(self, *args, **kwargs):
-        super(DynamicOutput, self).__init__()
-        self.strategies = [h(self) for h in self.strategy_classes]
-
-    def get_serializer_class(self):
-        for handler in self.strategies:
-            if handler.param_name in self.request.query_params:
-                return handler._get_serializer_from_param()
-        return self.serializer_class
+        target = self.serializers_fieldsets.get(name, None)
+        if isinstance(target, DynamicSerializer):
+            field_list = target.get_fields(self)
+            return self._build_serializer_from_fields(field_list)
+        elif isinstance(target, (list, tuple)):
+            return self._build_serializer_from_fields(target)
+        elif isclass(target):  # Serializer class
+            return target
+        else:  # Standard Serializer
+            raise InvalidSerializerError

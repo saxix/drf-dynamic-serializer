@@ -1,3 +1,11 @@
+Release 2.0
+-----------
+* BACKWARD INCOMPATIBLE
+* Removes DynamicField*
+* Raise Exception if wrong serializer
+* new DynamicSerializer create on the fly serializer with user selected fields
+
+
 Release 1.2
 -----------
 * removed pinned requirements

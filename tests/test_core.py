@@ -2,10 +2,9 @@
 from __future__ import absolute_import, unicode_literals
 
 import pytest
-from rest_framework.test import APIRequestFactory
 
 from demo.views import BaseViewSet, DynamicSerializerViewSet
-from dynamic_serializer.core import serializer_factory, SerializerStrategy
+from dynamic_serializer.core import serializer_factory
 
 
 def test_serializer_factory():
@@ -24,17 +23,17 @@ def test_serializer_factory():
 
 
 @pytest.mark.django_db
-def test_dynamicserializermixin():
-    # v = BaseViewSet()
-    # vs = DynamicSerializerViewSet()
-    factory = APIRequestFactory()
-    request = factory.get('/?_fields=first_name&serializer=short')
-    view = DynamicSerializerViewSet.as_view({'get': 'list'})(request)
-    # response = view(request).render()  # Calling the view, not calling `.get()`
-    # vs.request = request
-    # s = SerializerStrategy(view)
-    #
-    # FIXME: remove me
-    # print(111, s._get_serializer_from_param())
-
-
+def test_get_serializer_fields():
+    vs = DynamicSerializerViewSet()
+    assert vs.get_serializer_fields('light') == ['first_name', 'last_name']
+    assert vs.get_serializer_fields('std') == ['email',
+                                               'first_name',
+                                               'groups',
+                                               'is_active',
+                                               'is_staff',
+                                               'is_superuser',
+                                               'last_login',
+                                               'last_name',
+                                               'url',
+                                               'user_permissions',
+                                               'username']
