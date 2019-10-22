@@ -37,7 +37,7 @@ Pygments = "==2.2.0"
 WebOb = "==1.8.2"
 WebTest = "==2.0.30"
 pipenv = "*"
-djangorestframework = ">=3.7,<3.8"
+djangorestframework = ">=3.7,<3.10"
 Django = ">=1.10,<1.11"
 check-manifest = "*"
 
