@@ -4,9 +4,9 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+tox = "*"
 
 [dev-packages]
-tox = "==3.1.0"
 pytest = "==3.6.3"
 pytest-django = "==3.3.2"
 pytest-coverage = "==0.0"
@@ -42,7 +42,7 @@ Django = ">=1.10,<1.11"
 check-manifest = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "3.7"
 
 [scripts]
 test = "tox -e py36-d21-drf38"
