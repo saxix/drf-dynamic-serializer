@@ -3,6 +3,8 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
+[packages]
+
 [dev-packages]
 pytest = "==5.4.3"
 pytest-django = "==3.3.2"
@@ -27,7 +29,7 @@ six = "==1.15.0"
 virtualenv = "==20.4.3"
 waitress = "==1.1.0"
 wmctrl = "==0.3"
-factory-boy = "==3.2.0"
+factory_boy = "==3.2.0"
 Faker = "==6.6.3"
 Pygments = "==2.2.0"
 WebOb = "==1.8.2"
@@ -43,5 +45,3 @@ python_version = "3.7"
 
 [scripts]
 test = "tox -e py36-d21-drf38"
-
-[packages]
