@@ -38,7 +38,7 @@ WebOb = "==1.8.2"
 WebTest = "==2.0.30"
 pipenv = "*"
 djangorestframework = ">=3.7,<3.8"
-Django = ">=1.10,<1.11"
+Django = ">=1.10,<2.3"
 check-manifest = "*"
 
 [requires]
